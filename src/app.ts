@@ -16,15 +16,16 @@ app.get("/", (req: Request, res: Response) => {
             success: true,
             status: 200,
             message: "Welcome to Mango Server API"
-      })
+      });
 });
 
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
       res.status(500).json({
+            success: false,
             message: err?.message || "Internal Server Error",
-            err
-      })
+            errorDetails: err
+      });
 });
 
 export default app;

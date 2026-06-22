@@ -34,7 +34,7 @@ const userSchema = new Schema<IUser>({
             type: String,
             enum: {
                   values: ["ADMIN", "CUSTOMER"],
-                  message: "{VALUES} is not acceptable"
+                  message: "{VALUE} is not acceptable"
             }
       }
 }, {
