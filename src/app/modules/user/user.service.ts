@@ -7,10 +7,8 @@ import jwt, { JwtPayload, SignOptions } from "jsonwebtoken";
 
 
 const registerUser = async (payload: IUser) => {
-      const existingUser = await User.findOne({
-            email: payload.email,
-      });
-      if (existingUser) throw new AppError(409, "Email already exists");
+      // const existingUser = await User.findOne({ email: payload.email, });
+      // if (existingUser) throw new AppError(409, "Email already exists");
 
       payload.password = await bcrypt.hash(payload.password, config.bcrypt_salt);
       const data = await User.create(payload);
