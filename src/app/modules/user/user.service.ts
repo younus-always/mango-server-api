@@ -3,12 +3,16 @@ import AppError from "../../error/AppError";
 import { IUser } from "./user.interface";
 import { User } from "./user.model";
 import * as bcrypt from "bcrypt";
-import jwt, { SignOptions } from "jsonwebtoken";
+import jwt, { JwtPayload, SignOptions } from "jsonwebtoken";
 
 
 const registerUser = async (payload: IUser) => {
-      payload.password = await bcrypt.hash(payload.password, config.bcrypt_salt);
+      const existingUser = await User.findOne({
+            email: payload.email,
+      });
+      if (existingUser) throw new AppError(409, "Email already exists");
 
+      payload.password = await bcrypt.hash(payload.password, config.bcrypt_salt);
       const data = await User.create(payload);
       return data;
 };
@@ -24,10 +28,26 @@ const loginUser = async (payload: IUser) => {
             email: isUserExist.email,
             role: isUserExist.role
       };
+
       const accessToken = jwt.sign(jwtPayload, config.jwt_secret_token, { expiresIn: config.jwt_expiresIn } as SignOptions);
-      const refreshToken = jwt.sign(jwtPayload, config.jwt_refresh_token, { expiresIn: "2m" } as SignOptions);
+      const refreshToken = jwt.sign(jwtPayload, config.jwt_refresh_token, { expiresIn: "30d" } as SignOptions);
 
       return { accessToken, refreshToken };
+};
+
+const refreshToken = async (refreshToken: string) => {
+      const verifyRefreshToken = jwt.verify(refreshToken, config.jwt_refresh_token) as JwtPayload;
+
+      const isUserExist = await User.findOne({ email: verifyRefreshToken.email });
+      if (!isUserExist) throw new AppError(404, "User Not Found");
+
+      const jwtPayload = {
+            email: isUserExist.email,
+            role: isUserExist.role
+      };
+      const accessToken = jwt.sign(jwtPayload, config.jwt_secret_token, { expiresIn: config.jwt_expiresIn } as SignOptions);
+
+      return { accessToken };
 };
 
 const getAllUser = async () => {
@@ -49,6 +69,7 @@ const deleteUser = async (userId: string) => {
 export const userService = {
       registerUser,
       loginUser,
+      refreshToken,
       getAllUser,
       getUserById,
       deleteUser

@@ -15,5 +15,7 @@ export const auth = (role: string[]) => async (req: Request, res: Response, next
 
       if (!role.includes(decodedToken.role)) throw new AppError(401, "Unauthorized Access");
 
+      req.user = isUserExist;
+
       next();
 };

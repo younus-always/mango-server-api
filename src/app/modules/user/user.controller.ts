@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import { userService } from "./user.service";
+import config from "../../config";
 
 
 const registerUser = catchAsync(async (req: Request, res: Response) => {
@@ -10,13 +11,34 @@ const registerUser = catchAsync(async (req: Request, res: Response) => {
       sendResponse(res, {
             success: true,
             statusCode: 201,
-            message: "User Registered Successfully",
+            message: "User Registered Successful",
             data
-      })
+      });
 });
 
 const loginUser = catchAsync(async (req: Request, res: Response) => {
       const data = await userService.loginUser(req.body);
+
+      res.cookie("accessToken", data.accessToken, {
+            secure: config.node_env !== "development",
+            httpOnly: true
+      });
+      res.cookie("refreshToken", data.refreshToken, {
+            secure: config.node_env !== "development",
+            httpOnly: true
+      });
+
+      sendResponse(res, {
+            success: true,
+            statusCode: 200,
+            message: "User Logged In Successful",
+            data
+      });
+});
+
+const refreshToken = catchAsync(async (req: Request, res: Response) => {
+      const { refreshToken } = req.cookies;
+      const data = await userService.refreshToken(refreshToken);
 
       sendResponse(res, {
             success: true,
@@ -65,6 +87,7 @@ const deleteUser = catchAsync(async (req: Request, res: Response) => {
 export const userController = {
       registerUser,
       loginUser,
+      refreshToken,
       getAllUser,
       getUserById,
       deleteUser
