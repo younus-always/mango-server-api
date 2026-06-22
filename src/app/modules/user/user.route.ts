@@ -15,6 +15,9 @@ userRoute.post("/login",
       validateRequest(userLoginZodSchema),
       userController.loginUser
 );
+userRoute.post("/refresh-token",
+      userController.refreshToken
+);
 userRoute.get("/:userId",
       auth([UserRole.ADMIN]),
       userController.getUserById

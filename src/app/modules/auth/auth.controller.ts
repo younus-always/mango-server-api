@@ -5,7 +5,8 @@ import { authService } from "./auth.service";
 
 
 const changePassword = catchAsync(async (req: Request, res: Response) => {
-      const { email, oldPassword, newPassword } = req.body;
+      const { email } = req.user;
+      const { oldPassword, newPassword } = req.body;
       const data = await authService.changePassword(email, oldPassword, newPassword);
 
       sendResponse(res, {
@@ -16,7 +17,20 @@ const changePassword = catchAsync(async (req: Request, res: Response) => {
       });
 });
 
+const resetPassword = catchAsync(async (req: Request, res: Response) => {
+      const { email, phone, password } = req.body;
+      const data = await authService.resetPassword(email, phone, password);
+
+      sendResponse(res, {
+            success: true,
+            statusCode: 200,
+            message: "Password Reset Successfully",
+            data
+      });
+});
+
 
 export const authController = {
       changePassword,
+      resetPassword
 };
