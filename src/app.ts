@@ -21,8 +21,11 @@ app.get("/", (req: Request, res: Response) => {
 
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-      res.status(500).json({
+      const statusCode = err.statusCode ? err.statusCode : 500;
+
+      res.status(statusCode).json({
             success: false,
+            statusCode,
             message: err?.message || "Internal Server Error",
             errorDetails: err
       });

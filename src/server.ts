@@ -8,7 +8,7 @@ let server: Server;
 
 const startServer = async () => {
       try {
-            mongoose.connect(config.database_url as string);
+            mongoose.connect(config.database_url);
             console.log("Mongoose connected");
 
             server = app.listen(port, () => {

@@ -17,3 +17,12 @@ export const userCreateZodSchema = z.object({
       password: z.string(),
       role: z.enum(UserRole)
 });
+
+export const userLoginZodSchema = z.object({
+      email: z
+            .string()
+            .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Please enter a valid email"),
+      password: z
+            .string()
+            .min(6, "Password must be at least 6 characters")
+});
