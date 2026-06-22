@@ -3,6 +3,7 @@ import AppError from "../../error/AppError";
 import { IUser } from "./user.interface";
 import { User } from "./user.model";
 import * as bcrypt from "bcrypt";
+import jwt, { SignOptions } from "jsonwebtoken";
 
 
 const registerUser = async (payload: IUser) => {
@@ -19,7 +20,14 @@ const loginUser = async (payload: IUser) => {
       const checkPassword = await bcrypt.compare(payload.password, isUserExist.password);
       if (!checkPassword) throw new AppError(409, "Invalid Credentials");
 
-      return isUserExist;
+      const jwtPayload = {
+            email: isUserExist.email,
+            role: isUserExist.role
+      };
+      const accessToken = jwt.sign(jwtPayload, config.jwt_secret_token, { expiresIn: config.jwt_expiresIn } as SignOptions);
+      const refreshToken = jwt.sign(jwtPayload, config.jwt_refresh_token, { expiresIn: "2m" } as SignOptions);
+
+      return { accessToken, refreshToken };
 };
 
 const getAllUser = async () => {
