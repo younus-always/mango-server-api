@@ -30,7 +30,7 @@ const loginUser = async (payload: IUser) => {
       };
 
       const accessToken = jwt.sign(jwtPayload, config.jwt_secret_token, { expiresIn: config.jwt_expiresIn } as SignOptions);
-      const refreshToken = jwt.sign(jwtPayload, config.jwt_refresh_token, { expiresIn: "2m" } as SignOptions);
+      const refreshToken = jwt.sign(jwtPayload, config.jwt_refresh_token, { expiresIn: "30d" } as SignOptions);
 
       return { accessToken, refreshToken };
 };

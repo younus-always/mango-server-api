@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import { userService } from "./user.service";
+import config from "../../config";
 
 
 const registerUser = catchAsync(async (req: Request, res: Response) => {
@@ -18,6 +19,15 @@ const registerUser = catchAsync(async (req: Request, res: Response) => {
 const loginUser = catchAsync(async (req: Request, res: Response) => {
       const data = await userService.loginUser(req.body);
 
+      res.cookie("accessToken", data.accessToken, {
+            secure: config.node_env !== "development",
+            httpOnly: true
+      });
+      res.cookie("refreshToken", data.refreshToken, {
+            secure: config.node_env !== "development",
+            httpOnly: true
+      });
+
       sendResponse(res, {
             success: true,
             statusCode: 200,
@@ -27,7 +37,8 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
 });
 
 const refreshToken = catchAsync(async (req: Request, res: Response) => {
-      const data = await userService.refreshToken(req.body);
+      const { refreshToken } = req.cookies;
+      const data = await userService.refreshToken(refreshToken);
 
       sendResponse(res, {
             success: true,

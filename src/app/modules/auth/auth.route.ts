@@ -9,3 +9,9 @@ authRoute.post("/change-password",
       auth(Object.values(UserRole)),
       authController.changePassword
 );
+authRoute.post("/reset-password",
+      authController.resetPassword
+);
+authRoute.post("/logout",
+      authController.logout
+);
