@@ -10,9 +10,9 @@ const registerUser = catchAsync(async (req: Request, res: Response) => {
       sendResponse(res, {
             success: true,
             statusCode: 201,
-            message: "User Registered Successfully",
+            message: "User Registered Successful",
             data
-      })
+      });
 });
 
 const loginUser = catchAsync(async (req: Request, res: Response) => {

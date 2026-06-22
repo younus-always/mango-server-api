@@ -4,9 +4,9 @@ import { IUser } from "./user.interface";
 const userSchema = new Schema<IUser>({
       name: {
             type: String,
+            minlength: [3, "Name must be at least 3 characters"],
+            maxlength: [255, "Name cannot exceed 255 characters"],
             trim: true,
-            min: 3,
-            max: 255,
             required: true
       },
       email: {
@@ -18,8 +18,7 @@ const userSchema = new Schema<IUser>({
                   },
                   message: (props) => `${props.value} is not a valid email`,
             },
-            unique: true,
-            immutable: true,
+            unique: true
       },
       phone: {
             type: String,
@@ -35,7 +34,8 @@ const userSchema = new Schema<IUser>({
             enum: {
                   values: ["ADMIN", "CUSTOMER"],
                   message: "{VALUE} is not acceptable"
-            }
+            },
+            default: "CUSTOMER"
       }
 }, {
       versionKey: false,
