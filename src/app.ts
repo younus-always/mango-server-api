@@ -1,4 +1,4 @@
-import express, { Application, Request, Response } from "express";
+import express, { Application, NextFunction, Request, Response } from "express";
 import cors from 'cors';
 import { router } from "./app/routes";
 
@@ -16,7 +16,19 @@ app.get("/", (req: Request, res: Response) => {
             success: true,
             status: 200,
             message: "Welcome to Mango Server API"
-      })
+      });
+});
+
+
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+      const statusCode = err.statusCode ? err.statusCode : 500;
+
+      res.status(statusCode).json({
+            success: false,
+            statusCode,
+            message: err?.message || "Internal Server Error",
+            errorDetails: err
+      });
 });
 
 export default app;
