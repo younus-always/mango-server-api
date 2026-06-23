@@ -1,11 +1,19 @@
 import { Response } from "express";
 
 
+type TMeta = {
+      page: number;
+      limit: number;
+      total: number;
+      totalPage: number;
+};
+
 type TResponse<T> = {
       success: boolean;
       statusCode: number;
       message: string;
-      data: T
+      data: T,
+      meta?: TMeta
 };
 
 export const sendResponse = async <T>(res: Response, data: TResponse<T>) => {
@@ -14,6 +22,7 @@ export const sendResponse = async <T>(res: Response, data: TResponse<T>) => {
             success: data.success,
             statusCode: data.statusCode,
             message: data.message,
-            data: data.data
+            data: data.data,
+            meta: data.meta
       });
 };

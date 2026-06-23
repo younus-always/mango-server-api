@@ -7,11 +7,6 @@ const createMango = async (payload: IMango) => {
       return mango;
 };
 
-const getAllMango = async () => {
-      const data = await Mango.find();
-      return data;
-};
-
 const getMangoById = async (mangoId: string) => {
       const data = await Mango.findById(mangoId);
       return data;
@@ -24,7 +19,6 @@ const deleteMango = async (mangoId: string) => {
 
 export const mangoService = {
       createMango,
-      getAllMango,
       getMangoById,
       deleteMango
 };

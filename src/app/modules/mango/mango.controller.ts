@@ -16,13 +16,14 @@ const createMango = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllMango = catchAsync(async (req: Request, res: Response) => {
-      const data = await mangoService.getAllMango();
+      const { result, meta } = res.locals.data;
 
       sendResponse(res, {
             success: true,
             statusCode: 200,
             message: "All Mango Retrieved Successfully",
-            data
+            data: result,
+            meta
       });
 });
 

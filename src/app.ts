@@ -1,10 +1,7 @@
-import express, { Application, NextFunction, Request, Response } from "express";
+import express, { Application, Request, Response } from "express";
 import cors from 'cors';
 import cookieParser from "cookie-parser";
 import { router } from "./app/routes";
-import { ZodError } from "zod";
-import mongoose from "mongoose";
-import { TErrorSources } from "./app/interfaces/error";
 import { globalErrorHandler } from "./app/middlewares/globalErrorHandler";
 
 const app: Application = express();
