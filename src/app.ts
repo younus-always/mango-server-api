@@ -1,7 +1,8 @@
-import express, { Application, NextFunction, Request, Response } from "express";
+import express, { Application, Request, Response } from "express";
 import cors from 'cors';
 import cookieParser from "cookie-parser";
 import { router } from "./app/routes";
+import { globalErrorHandler } from "./app/middlewares/globalErrorHandler";
 
 const app: Application = express();
 
@@ -22,15 +23,6 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-      const statusCode = err.statusCode ? err.statusCode : 500;
-
-      res.status(statusCode).json({
-            success: false,
-            statusCode,
-            message: err?.message || "Internal Server Error",
-            errorDetails: err
-      });
-});
+app.use(globalErrorHandler);
 
 export default app;
