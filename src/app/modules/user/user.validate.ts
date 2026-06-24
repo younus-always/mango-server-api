@@ -1,5 +1,5 @@
 import z from "zod";
-import { UserRole } from "./user.constraint";
+import { IsActive, Role } from "./user.interface";
 
 export const userCreateZodSchema = z.object({
       name: z
@@ -14,16 +14,16 @@ export const userCreateZodSchema = z.object({
             .trim(),
       phone: z
             .string()
-            .regex(/^\d{10,}$/, "Phone must be at least 10 digits"),
+            .regex(/^(?:\+8801\d{9}|01\d{9})$/,
+                  { error: "Phone number must be valid for Bangladesh. Format: +8801XXXXXXXXX or 01XXXXXXXXX" }
+            )
+            .optional(),
       password: z
             .string()
             .min(8, "Password must be at least 8 characters")
             .regex(/[A-Z]/, "Password must contain uppercase letter")
-            .regex(/[0-9]/, "Password must contain a number"),
-      role: z
-            .enum(UserRole)
-            .optional()
-            .default(UserRole.CUSTOMER)
+            .regex(/[a-z]/, "Password must contain lowercase letter")
+            .regex(/[0-9]/, "Password must contain 1 number"),
 });
 
 export const userLoginZodSchema = z.object({
@@ -32,5 +32,33 @@ export const userLoginZodSchema = z.object({
             .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Please enter a valid email"),
       password: z
             .string()
-            .min(6, "Password must be at least 6 characters")
+            .min(8, "Password must be at least 8 characters")
+            .regex(/[A-Z]/, "Password must contain uppercase letter")
+            .regex(/[a-z]/, "Password must contain lowercase letter")
+            .regex(/[0-9]/, "Password must contain 1 number")
+});
+
+export const updateUserZodSchema = z.object({
+      name: z
+            .string()
+            .min(3, { error: "Name must be at least 3 characters long." })
+            .max(255, { error: "Name cannot exceed 255 characters." })
+            .optional(),
+      phone: z
+            .string({ error: "Phone number must be string." })
+            .regex(/^(?:\+8801\d{9}|01\d{9})$/,
+                  { error: "Phone number must be valid for Bangladesh. Format: +8801XXXXXXXXX or 01XXXXXXXXX" })
+            .optional(),
+      role: z
+            .enum(Object.values(Role) as [string, ...string[]])
+            .optional(),
+      isActive: z
+            .enum(Object.keys(IsActive) as [string, ...string[]])
+            .optional(),
+      isVerified: z
+            .boolean({ error: "isVerified must be true or false." })
+            .optional(),
+      isDeleted: z
+            .boolean({ error: "isDeleted must be true or false." })
+            .optional()
 });
