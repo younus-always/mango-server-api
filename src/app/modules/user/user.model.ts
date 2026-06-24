@@ -1,42 +1,59 @@
 import { model, Schema } from "mongoose";
-import { IUser } from "./user.interface";
+import { IAuthProvider, IsActive, IUser, Role } from "./user.interface";
+
+const authProviderSchema = new Schema<IAuthProvider>({
+      provider: { type: String, required: true },
+      providerId: { type: String, required: true }
+}, { _id: false });
 
 const userSchema = new Schema<IUser>({
       name: {
             type: String,
+            trim: true,
+            required: true,
             minlength: [3, "Name must be at least 3 characters"],
             maxlength: [255, "Name cannot exceed 255 characters"],
-            trim: true,
-            required: true
       },
       email: {
             type: String,
+            unique: true,
+            trim: true,
+            toLowerCase: true,
             required: true,
-            validate: {
-                  validator: function (value) {
-                        return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value);
-                  },
-                  message: (props) => `${props.value} is not a valid email`,
-            },
-            unique: true
+      },
+      password: {
+            type: String,
+            min: [8, "Password must be contain at least 8 characters"],
+            max: [20, "Password must be contain lower than 20 characters"],
+            required: true
       },
       phone: {
             type: String,
             unique: true,
-            required: [true, "Your Phone Number is not valid"]
+            sparse: true,
       },
-      password: {
+      picture: {
             type: String,
-            required: true
       },
       role: {
             type: String,
-            enum: {
-                  values: ["ADMIN", "CUSTOMER"],
-                  message: "{VALUE} is not acceptable"
-            },
-            default: "CUSTOMER"
-      }
+            enum: Object.values(Role),
+            default: Role.CUSTOMER
+      },
+      isVerified: {
+            type: Boolean,
+            default: false
+      },
+      isDeleted: {
+            type: Boolean,
+            default: false
+      },
+      isActive: {
+            type: String,
+            enum: Object.values(IsActive),
+            default: IsActive.ACTIVE
+      },
+      auths: [authProviderSchema]
 }, {
       versionKey: false,
       timestamps: true

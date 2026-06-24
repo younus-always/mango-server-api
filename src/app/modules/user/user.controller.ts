@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import { userService } from "./user.service";
-import config from "../../config";
+import { envVars } from "../../config";
 
 
 const registerUser = catchAsync(async (req: Request, res: Response) => {
@@ -20,11 +20,11 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
       const data = await userService.loginUser(req.body);
 
       res.cookie("accessToken", data.accessToken, {
-            secure: config.node_env !== "development",
+            secure: envVars.NODE_ENV !== "development",
             httpOnly: true
       });
       res.cookie("refreshToken", data.refreshToken, {
-            secure: config.node_env !== "development",
+            secure: envVars.NODE_ENV !== "development",
             httpOnly: true
       });
 
