@@ -6,16 +6,16 @@ import { ZodError } from "zod";
 
 export const globalErrorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
 
-      let statusCode = 500;
-      let message = "Internal Server Error";
+      let statusCode = err.statusCode || 500;
+      let message = err.message || "Internal Server Error";
       let errorSources: TErrorSources[] = [];
 
       if (err.code === 11000) {
             const duplicate = err.message.match(/"([^"]*)"/)[1];
-            message = `${duplicate} is already exists`
+            message = `${duplicate} is already exists`;
       }
       else if (err instanceof mongoose.Error.CastError) {
-            message = "Invalid MongoDb ObjectId"
+            message = "Invalid MongoDb ObjectId";
       }
       else if (err instanceof mongoose.Error.ValidationError) {
             const errors = Object.values(err.errors) as TErrorSources[];
@@ -25,7 +25,7 @@ export const globalErrorHandler = (err: any, req: Request, res: Response, next: 
                         path: error.path,
                         message: error.message
                   })
-            })
+            });
       }
       else if (err instanceof ZodError) {
             err.issues.forEach((issue) => {
@@ -40,6 +40,7 @@ export const globalErrorHandler = (err: any, req: Request, res: Response, next: 
             success: false,
             message: message,
             error: errorSources,
-            errorDetails: err
+            errorDetails: err,
+            stack: err.stack,
       });
 };

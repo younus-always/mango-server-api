@@ -16,8 +16,7 @@ export const userCreateZodSchema = z.object({
             .string()
             .regex(/^(?:\+8801\d{9}|01\d{9})$/,
                   { error: "Phone number must be valid for Bangladesh. Format: +8801XXXXXXXXX or 01XXXXXXXXX" }
-            )
-            .optional(),
+            ),
       password: z
             .string()
             .min(8, "Password must be at least 8 characters")
@@ -45,9 +44,17 @@ export const updateUserZodSchema = z.object({
             .max(255, { error: "Name cannot exceed 255 characters." })
             .optional(),
       phone: z
-            .string({ error: "Phone number must be string." })
+            .string()
             .regex(/^(?:\+8801\d{9}|01\d{9})$/,
                   { error: "Phone number must be valid for Bangladesh. Format: +8801XXXXXXXXX or 01XXXXXXXXX" })
+            .optional(),
+      picture: z
+            .string()
+            .optional(),
+      address: z
+            .string()
+            .trim()
+            .max(255, "Address cannot exceed 255 characters.")
             .optional(),
       role: z
             .enum(Object.values(Role) as [string, ...string[]])

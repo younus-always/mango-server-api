@@ -1,7 +1,7 @@
 import { envVars } from "../../config";
 import AppError from "../../error/AppError";
 import { generateToken, verifyToken } from "../../utils/jwt";
-import { IUser } from "./user.interface";
+import { IAuthProvider, IUser } from "./user.interface";
 import { User } from "./user.model";
 import * as bcrypt from "bcrypt";
 
@@ -10,8 +10,13 @@ const registerUser = async (payload: IUser) => {
       // const existingUser = await User.findOne({ email: payload.email, });
       // if (existingUser) throw new AppError(409, "Email already exists");
 
+      const userAuth: IAuthProvider = {
+            provider: "credentials",
+            providerId: payload.email,
+      };
+
       payload.password = await bcrypt.hash(payload.password, envVars.BCRYPT_SALT);
-      const data = await User.create(payload);
+      const data = await User.create({ auths: [userAuth], ...payload });
       return data;
 };
 
