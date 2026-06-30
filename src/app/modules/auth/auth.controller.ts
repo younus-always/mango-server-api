@@ -11,7 +11,7 @@ const changePassword = catchAsync(async (req: Request, res: Response) => {
 
       sendResponse(res, {
             success: true,
-            statusCode: 201,
+            statusCode: 200,
             message: "Password Changed Successfully",
             data
       });
@@ -36,7 +36,7 @@ const logout = catchAsync(async (req: Request, res: Response) => {
       sendResponse(res, {
             success: true,
             statusCode: 200,
-            message: "Logout Successfully",
+            message: "Logout Successful",
             data: null
       });
 });
